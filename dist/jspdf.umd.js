@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 2.5.2 Built on 2024-09-17T13:29:57.856Z
+ * Version 2.5.3 Built on 2024-12-05T13:58:49.540Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -6698,7 +6698,7 @@
    * @memberof jsPDF#
    */
 
-  jsPDF.version = "2.5.2";
+  jsPDF.version = "2.5.3";
 
   var jsPDFAPI = jsPDF.API;
   var scaleFactor = 1;
@@ -9610,7 +9610,8 @@
       JPEG: [[0xff, 0xd8, 0xff, 0xe0, undefined, undefined, 0x4a, 0x46, 0x49, 0x46, 0x00], //JFIF
       [0xff, 0xd8, 0xff, 0xe1, undefined, undefined, 0x45, 0x78, 0x69, 0x66, 0x00, 0x00], //Exif
       [0xff, 0xd8, 0xff, 0xdb], //JPEG RAW
-      [0xff, 0xd8, 0xff, 0xee] //EXIF RAW
+      [0xff, 0xd8, 0xff, 0xee], //EXIF RAW
+      [0xff, 0xd8] //ANY JPEG
       ],
       JPEG2000: [[0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20]],
       GIF87a: [[0x47, 0x49, 0x46, 0x38, 0x37, 0x61]],
