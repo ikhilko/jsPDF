@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 2.5.2 Built on 2024-03-29T20:32:32.639Z
+ * Version 2.5.2 Built on 2024-09-17T13:29:57.860Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -10119,8 +10119,7 @@ var AcroForm = jsPDF.AcroForm;
         0x00
       ], //Exif
       [0xff, 0xd8, 0xff, 0xdb], //JPEG RAW
-      [0xff, 0xd8, 0xff, 0xee], //EXIF RAW
-      [0xff, 0xd8] //ANY JPEG
+      [0xff, 0xd8, 0xff, 0xee] //EXIF RAW
     ],
     JPEG2000: [[0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20]],
     GIF87a: [[0x47, 0x49, 0x46, 0x38, 0x37, 0x61]],
