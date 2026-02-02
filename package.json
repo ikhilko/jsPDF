@@ -33,8 +33,8 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.28.4",
-    "fflate": "^0.8.1",
-    "fast-png": "^6.2.0"
+    "fast-png": "^6.2.0",
+    "fflate": "^0.8.1"
   },
   "optionalDependencies": {
     "canvg": "^3.0.11",
