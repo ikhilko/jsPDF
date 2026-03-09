@@ -1,7 +1,7 @@
 /** @license
  *
  * jsPDF - PDF Document creation from JavaScript
- * Version 4.1.0 Built on 2026-02-02T12:27:10.486Z
+ * Version 4.2.0 Built on 2026-02-19T09:43:09.011Z
  *                      CommitID 00000000
  *
  * Copyright (c) 2010-2025 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
@@ -6024,7 +6024,7 @@
    * @type {string}
    * @memberof jsPDF#
    */
-  jsPDF.version = "4.1.0";
+  jsPDF.version = "4.2.0";
 
   var jsPDFAPI = jsPDF.API;
   var scaleFactor = 1;
@@ -7925,7 +7925,11 @@
         return _AS;
       },
       set: function set(value) {
-        _AS = value;
+        var name = value === undefined || value === null ? "" : value.toString();
+        if (name.substr(0, 1) === "/") {
+          name = name.substr(1);
+        }
+        _AS = "/" + pdfEscapeName(name);
       }
     });
 
@@ -8073,7 +8077,11 @@
         return _AS;
       },
       set: function set(value) {
-        _AS = value;
+        var name = value === undefined || value === null ? "" : value.toString();
+        if (name.substr(0, 1) === "/") {
+          name = name.substr(1);
+        }
+        _AS = "/" + pdfEscapeName(name);
       }
     });
 
@@ -8090,7 +8098,11 @@
         return _AS.substr(1, _AS.length - 1);
       },
       set: function set(value) {
-        _AS = "/" + value;
+        var name = value === undefined || value === null ? "" : value.toString();
+        if (name.substr(0, 1) === "/") {
+          name = name.substr(1);
+        }
+        _AS = "/" + pdfEscapeName(name);
       }
     });
     this.caption = "l";
@@ -8748,9 +8760,7 @@
       //Exif
       [0xff, 0xd8, 0xff, 0xdb],
       //JPEG RAW
-      [0xff, 0xd8, 0xff, 0xee],
-      //EXIF RAW
-      [0xff, 0xd8] //ANY JPEG
+      [0xff, 0xd8, 0xff, 0xee] //EXIF RAW
       ],
       JPEG2000: [[0x00, 0x00, 0x00, 0x0c, 0x6a, 0x50, 0x20, 0x20]],
       GIF87a: [[0x47, 0x49, 0x46, 0x38, 0x37, 0x61]],
@@ -14994,11 +15004,31 @@
      * @returns {jsPDF}
      */
     jsPDFAPI.addJS = function (javascript) {
-      // FIX: Move variables inside function scope to prevent shared state
-      // between multiple jsPDF instances
       var jsNamesObj;
       var jsJsObj;
-      var text = javascript;
+      // Escape only unescaped parentheses, without double-escaping already escaped ones
+      function escapeParens(str) {
+        var out = "";
+        for (var i = 0; i < str.length; i++) {
+          var ch = str[i];
+          if (ch === "(" || ch === ")") {
+            // Count preceding backslashes to determine if the paren is already escaped
+            var bs = 0;
+            for (var j = i - 1; j >= 0 && str[j] === "\\"; j--) {
+              bs++;
+            }
+            if (bs % 2 === 0) {
+              out += "\\" + ch;
+            } else {
+              out += ch;
+            }
+          } else {
+            out += ch;
+          }
+        }
+        return out;
+      }
+      var text = escapeParens(javascript);
       this.internal.events.subscribe("postPutResources", function () {
         jsNamesObj = this.internal.newObject();
         this.internal.out("<<");
@@ -15008,6 +15038,7 @@
         jsJsObj = this.internal.newObject();
         this.internal.out("<<");
         this.internal.out("/S /JavaScript");
+        // The sanitized 'text' is now safe to be enclosed in parentheses
         this.internal.out("/JS (" + text + ")");
         this.internal.out(">>");
         this.internal.out("endobj");
@@ -24012,6 +24043,9 @@
     this.decodeAndBlitFrameBGRA = function (frame_num, pixels) {
       var frame = this.frameInfo(frame_num);
       var num_pixels = frame.width * frame.height;
+      if (num_pixels > 512 * 1024 * 1024) {
+        throw new Error("Image dimensions exceed 512MB, which is too large.");
+      }
       var index_stream = new Uint8Array(num_pixels); // At most 8-bit indices.
       GifReaderLZWOutputIndexStream(buf, frame.data_offset, index_stream, num_pixels);
       var palette_offset = frame.palette_offset;
@@ -24075,6 +24109,9 @@
     this.decodeAndBlitFrameRGBA = function (frame_num, pixels) {
       var frame = this.frameInfo(frame_num);
       var num_pixels = frame.width * frame.height;
+      if (num_pixels > 512 * 1024 * 1024) {
+        throw new Error("Image dimensions exceed 512MB, which is too large.");
+      }
       var index_stream = new Uint8Array(num_pixels); // At most 8-bit indices.
       GifReaderLZWOutputIndexStream(buf, frame.data_offset, index_stream, num_pixels);
       var palette_offset = frame.palette_offset;
